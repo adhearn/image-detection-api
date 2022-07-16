@@ -1,0 +1,15 @@
+CREATE TABLE images
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+ created_at TIMESTAMP WITH TIME ZONE,
+ image BINARY LARGE OBJECT,
+ label VARCHAR NOT NULL
+)
+
+CREATE TABLE image_detectios
+(
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  image_id INTEGER FOREIGN KEY images,
+  object_label VARCHAR NOT NULL,
+  confidence FLOAT,
+  detection_source VARCHAR
+)

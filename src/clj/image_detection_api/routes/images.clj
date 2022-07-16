@@ -15,6 +15,12 @@
    [clojure.java.io :as io]))
 
 
+(def ImagePostSchema
+  {(s/optional-key :image) s/Str
+   (s/optional-key :url) s/Str
+   (s/optional-key :label) s/Str
+   (s/optional-key :detectObjects) s/Bool})
+
 
 (defn image-routes []
   [""
@@ -56,7 +62,9 @@
 
    ["/images"
     {:get {:summary "get all images (optionally filtering to specific detected objects)"
-           :responses {200 {:body {:data models/ImageSchema}}}
-           :handler image-handlers/get-all-images}}]
-
-   ])
+           :responses {200 {:body {:data [models/ImageSchema]}}}
+           :handler image-handlers/get-all-images}
+     :post {:summary "upload a new image"
+            :parameters {:body ImagePostSchema}
+            :responses {200 {:body {:data models/ImageSchema}}}
+            :handler image-handlers/post-image}}]])

@@ -1,15 +1,16 @@
 CREATE TABLE images
 (id INTEGER PRIMARY KEY AUTO_INCREMENT,
- created_at TIMESTAMP WITH TIME ZONE,
- image BINARY LARGE OBJECT NOT NULL,
+ image BINARY LARGE OBJECT,
+ url VARCHAR,
  label VARCHAR NOT NULL
-)
+);
 
-CREATE TABLE image_detectios
+CREATE TABLE image_detections
 (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  image_id INTEGER FOREIGN KEY images,
+  image_id INTEGER NOT NULL,
   object_label VARCHAR NOT NULL,
   confidence FLOAT,
-  detection_source VARCHAR
+  detection_source VARCHAR,
+  FOREIGN KEY (image_id) REFERENCES images (id)
 )
