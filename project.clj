@@ -5,7 +5,6 @@
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.10"]
                  [clojure.java-time "0.3.3"]
-                 [com.h2database/h2 "1.4.200"]
                  [conman "0.9.3"]
                  [cprop "0.1.19"]
                  [expound "0.9.0"]
@@ -29,10 +28,12 @@
                  [org.webjars.npm/material-icons "1.0.0"]
                  [org.webjars/webjars-locator "0.42"]
                  [org.webjars/webjars-locator-jboss-vfs "0.1.0"]
+                 [org.xerial/sqlite-jdbc "3.23.1"]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.9.5"]
                  [ring/ring-defaults "0.3.3"]
-                 [selmer "1.12.50"]]
+                 [selmer "1.12.50"]
+                 ]
 
   :min-lein-version "2.0.0"
 

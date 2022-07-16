@@ -2,6 +2,7 @@
   (:require
    [image-detection-api.nrepl :as nrepl]
    [clojure.tools.logging :as log]
+   [image-detection-api.db.core :as db]
    [image-detection-api.models :as models]
    )
   (:gen-class))
@@ -10,6 +11,24 @@
   [status-code msg]
   {:status status-code
    :body {:error msg}})
+
+(defn success-response
+  [data]
+  {:status 200
+   :body {:data data}})
+
+(defn detect-objects
+  [image]
+  (assoc image :detections []))
+
+(defn save-image!
+  [image]
+  (let [detections (:detections image)
+        image-id (db/insert-image! image)]
+    (println image-id)
+    (doseq [detection (:detections image)]
+      (db/insert-detection! (assoc detection :image_id (:id image))))
+    image))
 
 
 (defn get-all-images
@@ -26,6 +45,11 @@
     (and image url) (error-response 400 "cannot provide both image contents and image url")
     (not (or image url)) (error-response 400 "must provide either image contents or image url")
     :else
-    {:status 200
-     :body {:data models/sample-image}})
-  )
+    (let [label (if label label (str (gensym)))
+          image {:image image
+                 :url  url
+                 :label label}]
+      (-> image
+          (detect-objects)
+          (save-image!)
+          (success-response)))))

@@ -10,6 +10,7 @@
 
 (def sample-image
   {:id 1
+   :url "https://upload.wikimedia.org/wikipedia/commons/d/dd/Micrathene_whitneyi_29APR12_Madera_Canyon_AZ.jpg"
    :label "test"
    :detections [{:detected-object "cat" :confidence 0.9 :source "Manual"}]})
 
@@ -20,7 +21,7 @@
 
 (def ImageSchema
   {:id s/Int
-   (s/optional-key :url) s/Str
-   (s/optional-key :image) s/Str
+   (s/optional-key :url) (s/maybe s/Str)
+   (s/optional-key :image) (s/maybe s/Str)
    :label s/Str
    :detections [ImageDetectionSchema]})
