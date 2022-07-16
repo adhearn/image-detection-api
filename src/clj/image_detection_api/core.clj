@@ -1,13 +1,13 @@
 (ns image-detection-api.core
   (:require
-    [image-detection-api.handler :as handler]
-    [image-detection-api.nrepl :as nrepl]
-    [luminus.http-server :as http]
-    [luminus-migrations.core :as migrations]
-    [image-detection-api.config :refer [env]]
-    [clojure.tools.cli :refer [parse-opts]]
-    [clojure.tools.logging :as log]
-    [mount.core :as mount])
+   [image-detection-api.handler :as handler]
+   [image-detection-api.nrepl :as nrepl]
+   [luminus.http-server :as http]
+   [luminus-migrations.core :as migrations]
+   [image-detection-api.config :refer [env]]
+   [clojure.tools.cli :refer [parse-opts]]
+   [clojure.tools.logging :as log]
+   [mount.core :as mount])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -26,7 +26,7 @@
   :start
   (http/start
     (-> env
-        (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime))))) 
+        (update :io-threads #(or % (* 2 (.availableProcessors (Runtime/getRuntime)))))
         (assoc  :handler (handler/app))
         (update :port #(or (-> env :options :port) %))
         (select-keys [:handler :host :port])))
@@ -75,4 +75,3 @@
       (System/exit 0))
     :else
     (start-app args)))
-  

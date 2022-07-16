@@ -5,6 +5,7 @@
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.10"]
                  [clojure.java-time "0.3.3"]
+                 [com.h2database/h2 "1.4.200"]
                  [conman "0.9.3"]
                  [cprop "0.1.19"]
                  [expound "0.9.0"]
@@ -34,14 +35,14 @@
                  [selmer "1.12.50"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
   :target-path "target/%s/"
   :main ^:skip-aot image-detection-api.core
 
-  :plugins [] 
+  :plugins []
 
   :profiles
   {:uberjar {:omit-source true
@@ -61,8 +62,8 @@
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
                                  [jonase/eastwood "0.3.5"]
-                                 [cider/cider-nrepl "0.26.0"]] 
-                  
+                                 [cider/cider-nrepl "0.26.0"]]
+
                   :source-paths ["env/dev/clj" ]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user

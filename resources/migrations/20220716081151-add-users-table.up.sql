@@ -1,9 +1,15 @@
-CREATE TABLE users
-(id VARCHAR(20) PRIMARY KEY,
- first_name VARCHAR(30),
- last_name VARCHAR(30),
- email VARCHAR(30),
- admin BOOLEAN,
- last_login TIMESTAMP,
- is_active BOOLEAN,
- pass VARCHAR(300));
+CREATE TABLE images
+(id INTEGER PRIMARY KEY AUTO_INCREMENT,
+ created_at TIMESTAMP WITH TIME ZONE,
+ image BINARY LARGE OBJECT NOT NULL,
+ label VARCHAR NOT NULL
+)
+
+CREATE TABLE image_detectios
+(
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  image_id INTEGER FOREIGN KEY images,
+  object_label VARCHAR NOT NULL,
+  confidence FLOAT,
+  detection_source VARCHAR
+)

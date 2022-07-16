@@ -2,8 +2,7 @@
   (:require
     [image-detection-api.middleware :as middleware]
     [image-detection-api.layout :refer [error-page]]
-    [image-detection-api.routes.home :refer [home-routes]]
-    [image-detection-api.routes.services :refer [service-routes]]
+    [image-detection-api.routes.images :refer [image-routes]]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring :as ring]
     [ring.middleware.content-type :refer [wrap-content-type]]
@@ -19,12 +18,11 @@
   :start
   (ring/ring-handler
     (ring/router
-      [(home-routes)
-       (service-routes)])
+     [(image-routes)])
     (ring/routes
       (swagger-ui/create-swagger-ui-handler
-        {:path   "/swagger-ui"
-         :url    "/api/swagger.json"
+        {:path   "/swagger/ui"
+         :url    "/swagger/swagger.json"
          :config {:validator-url nil}})
       (ring/create-resource-handler
         {:path "/"})

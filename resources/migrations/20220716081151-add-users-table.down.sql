@@ -1,1 +1,2 @@
-DROP TABLE users;
+DROP TABLE image_detections;
+DROP TABLE images;
