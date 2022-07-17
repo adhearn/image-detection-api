@@ -24,13 +24,13 @@ SELECT i.id AS id, i.image AS image, i.url as url, i.label AS label, dets.object
 FROM images i
 LEFT OUTER JOIN image_detections dets ON dets.image_id = i.id
 
--- :name get-images-images-with-detection-labels :?
+-- :name get-images-with-detection-labels :?
 -- :doc retrieve images and their associated detections with specific object detection labels
 SELECT i.id AS id, i.image AS image, i.url as url, i.label AS label, dets.object_label AS detection_label, dets.confidence AS confidence, dets.detection_source AS detection_source
 FROM images i
 LEFT OUTER JOIN image_detections dets ON dets.image_id = i.id
 WHERE i.id IN (
-  SELECT DISTINCT image_id
-  FROM image_detections
-  WHERE detection_label IN :filter_labels
+  SELECT DISTINCT d.image_id
+  FROM image_detections d
+  WHERE d.object_label IN (:v*:filter_labels)
 )

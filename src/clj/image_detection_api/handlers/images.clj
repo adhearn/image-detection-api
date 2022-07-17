@@ -1,5 +1,6 @@
 (ns image-detection-api.handlers.images
   (:require
+   [clojure.string :as s]
    [clojure.tools.logging :as log]
    [image-detection-api.db.core :as db]
    [image-detection-api.detection :as detection]
@@ -52,8 +53,12 @@
 (defn get-all-images
   "Returns all images, optionally filtering to just those that match specified labels"
   [{{{:keys [objects]} :query} :parameters}]
-  (let [all-images-flat (db/get-all-images)]
-    (success-response (vals (reduce partition-by-image {} all-images-flat)))))
+  (println objects)
+  (let [images-flat (if objects
+                      (db/get-images-with-detection-labels {:filter_labels (s/split objects #",")})
+                      (db/get-all-images))]
+    (println images-flat)
+    (success-response (vals (reduce partition-by-image {} images-flat)))))
 
 (defn post-image
   [{{{:keys [image url label detectObjects]} :body} :parameters}]

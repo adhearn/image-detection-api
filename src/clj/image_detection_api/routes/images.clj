@@ -64,6 +64,7 @@
     {}
     [""
      {:get {:summary "get all images (optionally filtering to specific detected objects)"
+            :parameters {:query {(s/optional-key :objects) (s/maybe s/Str)}}
             :responses {200 {:body {:data [models/ImageSchema]}}}
             :handler image-handlers/get-all-images}
       :post {:summary "upload a new image"
