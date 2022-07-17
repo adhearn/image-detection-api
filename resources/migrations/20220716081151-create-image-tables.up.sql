@@ -3,7 +3,9 @@ CREATE TABLE images
  url VARCHAR,
  image BINARY LARGE OBJECT,
  label VARCHAR NOT NULL
-);
+)
+
+--;;
 
 CREATE TABLE image_detections
 (

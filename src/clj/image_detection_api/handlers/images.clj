@@ -15,7 +15,14 @@
 (defn success-response
   [data]
   {:status 200
+   ;; We wrap the response with {data: ...} to avoid a security issue with JS handling of JSON: http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/
    :body {:data data}})
+
+(defn make-detection
+  [label confidence source]
+  {:detected-object label
+   :confidence confidence
+   :source source})
 
 (defn detect-objects
   [image]
@@ -24,19 +31,34 @@
 (defn save-image!
   [image]
   (let [detections (:detections image)
-        image-id (db/insert-image! image)]
-    (println image-id)
+        {:keys [:id]} (db/insert-image! image)]
     (doseq [detection (:detections image)]
       (db/insert-detection! (assoc detection :image_id (:id image))))
-    image))
+    (assoc image :id id)))
 
+(defn partition-by-image
+  [images-by-id {:keys [id image url label detection_label confidence detection_source] :as flat-image}]
+  (let [detection (make-detection detection_label confidence detection_source)]
+    (if (contains? images-by-id id)
+      (assoc-in images-by-id [id :detections] (conj (get-in images-by-id [id :detections]) detection))
+      (assoc images-by-id id {:id id
+                               :image image
+                               :url url
+                               :label label
+                               :detections (if detection_label [detection] [])}))))
+
+(defn get-image
+  [{{{:keys [imageId]} :path} :parameters}]
+  (let [image (get (reduce partition-by-image {} (db/get-image-by-id {:id imageId})) imageId)]
+    (if (nil? image)
+      (error-response 404 (str "no image found for id: " imageId))
+      (success-response image))))
 
 (defn get-all-images
   "Returns all images, optionally filtering to just those that match specified labels"
   [{{{:keys [objects]} :query} :parameters}]
-  {:status 200
-   ; We wrap the response with {data: ...} to avoid a security issue with JS handling of JSON: http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/
-   :body {:data [models/sample-image]}})
+  (let [all-images-flat (db/get-all-images)]
+    (success-response (vals (reduce partition-by-image {} all-images-flat)))))
 
 (defn post-image
   [{{{:keys [image url label detectObjects]} :body} :parameters}]

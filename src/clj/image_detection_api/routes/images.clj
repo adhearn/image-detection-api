@@ -61,10 +61,18 @@
     {:get (constantly (ok {:message "pong"}))}]
 
    ["/images"
-    {:get {:summary "get all images (optionally filtering to specific detected objects)"
-           :responses {200 {:body {:data [models/ImageSchema]}}}
-           :handler image-handlers/get-all-images}
-     :post {:summary "upload a new image"
-            :parameters {:body ImagePostSchema}
+    {}
+    [""
+     {:get {:summary "get all images (optionally filtering to specific detected objects)"
+            :responses {200 {:body {:data [models/ImageSchema]}}}
+            :handler image-handlers/get-all-images}
+      :post {:summary "upload a new image"
+             :parameters {:body ImagePostSchema}
+             :responses {200 {:body {:data models/ImageSchema}}}
+             :handler image-handlers/post-image}}]
+
+    ["/:imageId"
+     {:get {:summary "get a single image by id"
+            :parameters {:path {:imageId s/Int}}
             :responses {200 {:body {:data models/ImageSchema}}}
-            :handler image-handlers/post-image}}]])
+            :handler image-handlers/get-image}}]]])
