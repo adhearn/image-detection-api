@@ -1,10 +1,9 @@
 (ns image-detection-api.handlers.images
   (:require
-   [image-detection-api.nrepl :as nrepl]
    [clojure.tools.logging :as log]
    [image-detection-api.db.core :as db]
-   [image-detection-api.models :as models]
-   )
+   [image-detection-api.detection :as detection]
+   [image-detection-api.models :as models])
   (:gen-class))
 
 (defn error-response
@@ -18,27 +17,23 @@
    ;; We wrap the response with {data: ...} to avoid a security issue with JS handling of JSON: http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/
    :body {:data data}})
 
-(defn make-detection
+(defn make-detection-response
   [label confidence source]
   {:detected-object label
    :confidence confidence
    :source source})
-
-(defn detect-objects
-  [image]
-  (assoc image :detections []))
 
 (defn save-image!
   [image]
   (let [detections (:detections image)
         {:keys [:id]} (db/insert-image! image)]
     (doseq [detection (:detections image)]
-      (db/insert-detection! (assoc detection :image_id (:id image))))
+      (db/insert-detection! (assoc detection :image-id id)))
     (assoc image :id id)))
 
 (defn partition-by-image
   [images-by-id {:keys [id image url label detection_label confidence detection_source] :as flat-image}]
-  (let [detection (make-detection detection_label confidence detection_source)]
+  (let [detection (make-detection-response detection_label confidence detection_source)]
     (if (contains? images-by-id id)
       (assoc-in images-by-id [id :detections] (conj (get-in images-by-id [id :detections]) detection))
       (assoc images-by-id id {:id id
@@ -72,6 +67,6 @@
                  :url  url
                  :label label}]
       (-> image
-          (detect-objects)
+          (detection/detect-objects)
           (save-image!)
           (success-response)))))

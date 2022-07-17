@@ -4,6 +4,8 @@
   :url "http://example.com/FIXME"
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.10"]
+                 [cheshire "5.11.0"]
+                 [clj-http "3.12.3"]
                  [clojure.java-time "0.3.3"]
                  [conman "0.9.3"]
                  [cprop "0.1.19"]

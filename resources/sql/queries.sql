@@ -9,7 +9,7 @@ RETURNING id;
 -- :doc insert an image detection record and returns it
 INSERT INTO image_detections
 (image_id, object_label, confidence, detection_source)
-VALUES (:image_id, :object_label, :confidence, :detection_source);
+VALUES (:image-id, :detected-object, :confidence, :source);
 
 -- :name get-image-by-id :?
 -- :doc retrieve a single image and all its associated detections
