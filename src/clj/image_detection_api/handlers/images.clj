@@ -23,6 +23,7 @@
 
 (defn save-image!
   [image]
+  (println image)
   (let [detections (:detections image)
         {:keys [:id]} (db/insert-image! image)]
     (doseq [detection (:detections image)]
@@ -66,9 +67,11 @@
                  :url  url
                  :label label}]
       (let [result (fail/ok-> image
-                       (detection/detect-objects)
-                       (save-image!)
-                       (success-response))]
+                              ((fn [image] (if detectObjects
+                                             (detection/detect-objects image)
+                                             (assoc image :detections []))))
+                              (save-image!)
+                              (success-response))]
         (if (fail/failed? result)
             (error-response {:status 400 :message (fail/message result)})
             result)))))
