@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  image-detection:
+    build: .
+    depends_on:
+      - db
+    # volumes:
+    #   - ".:/app"
+    ports:
+      - 3000:3000
+    environment:
+      - IMAGGA__API_KEY
+      - IMAGGA__API_SECRET
+      - DATABASE_URL=postgresql://db/image_detection_api?user=postgres&password=password
+
+  db:
+    image: postgres:14
+    ports:
+      - "54321:5432"
+    # Convenient for local development, preserves db data across restarts.
+    volumes:
+      - "/Users/adhearn/data/image-detection-db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_DB=image_detection_api
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
