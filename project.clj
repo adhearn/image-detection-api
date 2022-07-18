@@ -1,7 +1,7 @@
 (defproject image-detection-api "0.1.0-SNAPSHOT"
 
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "REST API for performing object detection on images"
+  :url ""
 
   :dependencies [[ch.qos.logback/logback-classic "1.2.10"]
                  [cheshire "5.11.0"]

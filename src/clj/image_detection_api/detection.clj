@@ -69,7 +69,6 @@
             error-msg (str "request to Imagga failed with status code " (:status resp) ": " resp-msg)]
         (fail/fail error-msg)))))
 
-
 (defn detect-objects
   "Detect objects in a given image map. Currently, Imagga is supported detection provider."
   [image]
