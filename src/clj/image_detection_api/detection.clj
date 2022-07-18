@@ -1,7 +1,9 @@
 (ns image-detection-api.detection
   (:require
+   [cheshire.core :as cheshire]
    [clj-http.client :as client]
    [clojure.tools.logging :as log]
+   [failjure.core :as fail]
    [image-detection-api.config :refer [env]])
   (:gen-class))
 
@@ -38,7 +40,8 @@
   (let [url (str imagga-tag-url "?image_url=" image-url)
         {:keys [key secret] :as creds} (imagga-creds)
         args {:basic-auth [key, secret]
-              :as :json}]
+              :as :json
+              :throw-exceptions false}]
     (client/get url args)))
 
 (defn imagga-detect-base64
@@ -47,7 +50,8 @@
   (let [{:keys [key secret] :as creds} (imagga-creds)
         args {:basic-auth [key, secret]
               :form-params {:image_base64 image-contents}
-              :as :json}]
+              :as :json
+              :throw-exceptions false}]
     (client/post imagga-tag-url args)))
 
 (defn imagga-detect
@@ -60,10 +64,16 @@
                (imagga-detect-base64 image-contents))]
     (if (= (:status resp) 200)
       (imagga-response->detections resp)
-      []))) ;; TODO: error handling
+      (let [error-body (cheshire/parse-string (:body resp))
+            resp-msg (get-in error-body ["status" "text"])
+            error-msg (str "request to Imagga failed with status code " (:status resp) ": " resp-msg)]
+        (fail/fail error-msg)))))
 
 
 (defn detect-objects
   "Detect objects in a given image map. Currently, Imagga is supported detection provider."
   [image]
-  (assoc image :detections (imagga-detect image)))
+  (let [result (imagga-detect image)]
+    (if (fail/failed? result)
+      result
+      (assoc image :detections result))))

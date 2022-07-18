@@ -1,14 +1,14 @@
 (ns image-detection-api.handler
   (:require
-    [image-detection-api.middleware :as middleware]
-    [image-detection-api.layout :refer [error-page]]
-    [image-detection-api.routes.images :refer [image-routes]]
-    [reitit.swagger-ui :as swagger-ui]
-    [reitit.ring :as ring]
-    [ring.middleware.content-type :refer [wrap-content-type]]
-    [ring.middleware.webjars :refer [wrap-webjars]]
-    [image-detection-api.env :refer [defaults]]
-    [mount.core :as mount]))
+   [image-detection-api.errors :refer [error-response]]
+   [image-detection-api.middleware :as middleware]
+   [image-detection-api.routes.images :refer [image-routes]]
+   [reitit.swagger-ui :as swagger-ui]
+   [reitit.ring :as ring]
+   [ring.middleware.content-type :refer [wrap-content-type]]
+   [ring.middleware.webjars :refer [wrap-webjars]]
+   [image-detection-api.env :refer [defaults]]
+   [mount.core :as mount]))
 
 (mount/defstate init-app
   :start ((or (:init defaults) (fn [])))
@@ -30,11 +30,11 @@
         (wrap-webjars (constantly nil)))
       (ring/create-default-handler
         {:not-found
-         (constantly (error-page {:status 404, :title "404 - Page not found"}))
+         (constantly (error-response {:status 404, :message "Not found"}))
          :method-not-allowed
-         (constantly (error-page {:status 405, :title "405 - Not allowed"}))
+         (constantly (error-response {:status 405, :message "Not allowed"}))
          :not-acceptable
-         (constantly (error-page {:status 406, :title "406 - Not acceptable"}))}))))
+         (constantly (error-response {:status 406, :message "Not acceptable"}))}))))
 
 (defn app []
   (middleware/wrap-base #'app-routes))

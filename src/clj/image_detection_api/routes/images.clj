@@ -46,8 +46,8 @@
 
    ;; swagger documentation
    ["/swagger" {:no-doc true
-                :swagger {:info {:title "my-api"
-                                 :description "https://cljdoc.org/d/metosin/reitit"}}}
+                :swagger {:info {:title "Image Detection"
+                                 :description "API for detecting objects in images."}}}
 
     ["/swagger.json"
      {:get (swagger/create-swagger-handler)}]

@@ -10,6 +10,7 @@
                  [conman "0.9.3"]
                  [cprop "0.1.19"]
                  [expound "0.9.0"]
+                 [failjure "2.2.0"]
                  [funcool/struct "1.4.0"]
                  [json-html "0.4.7"]
                  [luminus-migrations "0.7.2"]

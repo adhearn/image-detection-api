@@ -2,15 +2,12 @@
   (:require
    [clojure.string :as s]
    [clojure.tools.logging :as log]
+   [failjure.core :as fail]
    [image-detection-api.db.core :as db]
    [image-detection-api.detection :as detection]
+   [image-detection-api.errors :refer [error-response]]
    [image-detection-api.models :as models])
   (:gen-class))
-
-(defn error-response
-  [status-code msg]
-  {:status status-code
-   :body {:error msg}})
 
 (defn success-response
   [data]
@@ -47,31 +44,31 @@
   [{{{:keys [imageId]} :path} :parameters}]
   (let [image (get (reduce partition-by-image {} (db/get-image-by-id {:id imageId})) imageId)]
     (if (nil? image)
-      (error-response 404 (str "no image found for id: " imageId))
+      (error-response {:status 404 :message (str "no image found for id: " imageId)})
       (success-response image))))
 
 (defn get-all-images
   "Returns all images, optionally filtering to just those that match specified labels"
   [{{{:keys [objects]} :query} :parameters}]
-  (println objects)
   (let [images-flat (if objects
                       (db/get-images-with-detection-labels {:filter_labels (s/split objects #",")})
                       (db/get-all-images))]
-    (println images-flat)
     (success-response (vals (reduce partition-by-image {} images-flat)))))
 
 (defn post-image
   [{{{:keys [image url label detectObjects]} :body} :parameters}]
-  (println image url)
   (cond
-    (and image url) (error-response 400 "cannot provide both image contents and image url")
-    (not (or image url)) (error-response 400 "must provide either image contents or image url")
+    (and image url) (error-response {:status 400 :message "cannot provide both image contents and image url"})
+    (not (or image url)) (error-response {:status 400 :message "must provide either image contents or image url"})
     :else
     (let [label (if label label (str (gensym)))
           image {:image image
                  :url  url
                  :label label}]
-      (-> image
-          (detection/detect-objects)
-          (save-image!)
-          (success-response)))))
+      (let [result (fail/ok-> image
+                       (detection/detect-objects)
+                       (save-image!)
+                       (success-response))]
+        (if (fail/failed? result)
+            (error-response {:status 400 :message (fail/message result)})
+            result)))))
