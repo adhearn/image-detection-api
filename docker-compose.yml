@@ -4,8 +4,6 @@ services:
     build: .
     depends_on:
       - db
-    # volumes:
-    #   - ".:/app"
     ports:
       - 3000:3000
     environment:
@@ -17,9 +15,9 @@ services:
     image: postgres:14
     ports:
       - "54321:5432"
-    # Convenient for local development, preserves db data across restarts.
-    volumes:
-      - "/Users/adhearn/data/image-detection-db:/var/lib/postgresql/data"
+    # Convenient for local development, preserves db data across restarts, not so great for distributing to others.
+    # volumes:
+    #   - "/Users/adhearn/data/image-detection-db:/var/lib/postgresql/data"
     environment:
       - POSTGRES_DB=image_detection_api
       - POSTGRES_HOST=db
